@@ -22,8 +22,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = 200
 learning_rate = 0.001
 betas = (0.9, 0.999)
-mini_batch_size = 2000
-accumulation_steps = 25
+mini_batch_size = 5000
+accumulation_steps = 10
 batch_size = mini_batch_size * accumulation_steps
 
 
@@ -32,7 +32,7 @@ batch_size = mini_batch_size * accumulation_steps
 config_keys = [k for k,v in globals().items() if not k.startswith('_') and isinstance(v, (int, float, bool, str))]
 configuration = {k: globals()[k] for k in config_keys}
 if wandb_log:
-    wandb.init(project=wandb_project, name=wandb_run_name, config=configuration)
+    run = wandb.init(project=wandb_project, name=wandb_run_name, config=configuration)
 
 
 
@@ -54,8 +54,8 @@ test_transform = transforms.Compose([
 train_dataset = torchvision.datasets.CIFAR10(root='data/',train=True, transform=train_transform,download=True)
 test_dataset = torchvision.datasets.CIFAR10(root='data/',train=False, transform=test_transform)
 
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=batch_size, shuffle=True)
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=False)
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=mini_batch_size, shuffle=True)
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=mini_batch_size, shuffle=False)
 
 
 
@@ -205,3 +205,5 @@ for epoch in range(num_epochs):
             "test/loss": avg_test_loss,
             "test/accuracy": accuracy,
         })
+        
+run.finish()

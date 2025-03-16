@@ -22,8 +22,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = 200
 learning_rate = 0.001
 betas = (0.9, 0.999)
-mini_batch_size = 5000
-accumulation_steps = 10
+mini_batch_size = 2000
+accumulation_steps = 25
 batch_size = mini_batch_size * accumulation_steps
 
 

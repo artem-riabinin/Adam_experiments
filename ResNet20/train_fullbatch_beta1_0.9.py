@@ -58,7 +58,7 @@ test_dataset = torchvision.datasets.CIFAR10(root='data/',train=False, transform=
 
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=mini_batch_size, shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=mini_batch_size, shuffle=False)
-print(len(train_loader))
+
 
 
 # Basic Architecture for ResNet

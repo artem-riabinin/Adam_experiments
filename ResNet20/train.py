@@ -22,8 +22,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = 200
 learning_rate = 0.001
 betas = (0.9, 0.999)
-mini_batch_size = 5000
-accumulation_steps = 10
+mini_batch_size = 10000
+accumulation_steps = 5
 batch_size = mini_batch_size * accumulation_steps
 
 
@@ -56,7 +56,7 @@ test_dataset = torchvision.datasets.CIFAR10(root='data/',train=False, transform=
 
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,batch_size=mini_batch_size, shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset,batch_size=mini_batch_size, shuffle=False)
-
+print(len(train_loader))
 
 
 # Basic Architecture for ResNet

@@ -19,9 +19,11 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 # Hyper-parameters
-num_epochs = 200
+num_epochs = 300
 learning_rate = 0.001
-betas = (0.9, 0.999)
+beta1 = 0.9
+beta2 = 0.999
+betas = (beta1, beta2)
 mini_batch_size = 10000
 accumulation_steps = 5
 batch_size = mini_batch_size * accumulation_steps

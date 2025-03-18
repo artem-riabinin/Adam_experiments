@@ -19,8 +19,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 # Hyper-parameters
-num_epochs = 1500
-learning_rate = 0.0005
+num_epochs = 1000
+learning_rate = 0.001
 beta1 = 0.9
 beta2 = 0.1
 betas = (beta1, beta2)

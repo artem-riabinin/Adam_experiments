@@ -42,10 +42,6 @@ if wandb_log:
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])
 
 train_transform = transforms.Compose([
-    transforms.Pad(4),
-    transforms.RandomRotation(10),
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomCrop(32),
     transforms.ToTensor(),
     normalize])
     

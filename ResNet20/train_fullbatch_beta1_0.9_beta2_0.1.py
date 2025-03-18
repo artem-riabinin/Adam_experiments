@@ -19,7 +19,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 # Hyper-parameters
-num_epochs = 1000
+num_epochs = 1500
 learning_rate = 0.0005
 beta1 = 0.9
 beta2 = 0.1
@@ -156,6 +156,7 @@ for epoch in range(num_epochs):
     running_train_loss = 0.0
 
     for i, (images, labels) in enumerate(train_loader):
+        print('i',i)
         images = images.to(device)
         labels = labels.to(device)
 
@@ -166,6 +167,7 @@ for epoch in range(num_epochs):
         loss.backward()
 
         if (i + 1) % accumulation_steps == 0:
+            print('i+1', i+1)
             optimizer.step()
             optimizer.zero_grad()
 

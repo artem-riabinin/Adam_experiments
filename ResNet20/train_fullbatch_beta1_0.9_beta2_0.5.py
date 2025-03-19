@@ -39,7 +39,7 @@ if wandb_log:
 
 
 # Image preprocessing modules
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])
+normalize = transforms.Normalize(mean=[0.4915, 0.4823, 0.4468], std=[0.2470, 0.2435, 0.2616])
 
 train_transform = transforms.Compose([
     transforms.ToTensor(),

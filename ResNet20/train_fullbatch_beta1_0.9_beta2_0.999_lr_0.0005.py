@@ -8,7 +8,7 @@ import torchvision.transforms as transforms
 
 # wandb logging
 wandb_log = True 
-wandb_project = 'ResNet20'
+wandb_project = 'resnet20_exp'
 wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.999_lr_0.0005'
 
 

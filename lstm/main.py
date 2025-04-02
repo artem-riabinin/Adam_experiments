@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import copy
+import wandb
 
 # wandb logging
 wandb_log = True 
@@ -36,7 +37,7 @@ parser.add_argument('--beta1', type=float, default=0.9,
                     help='beta1')
 parser.add_argument('--beta2', type=float, default=0.999,
                     help='beta2')
-parser.add_argument('--epochs', type=int, default=150,
+parser.add_argument('--epochs', type=int, default=200,
                     help='upper epoch limit')
 parser.add_argument('--batch_size', type=int, default=2640, metavar='N',
                     help='batch size')
@@ -288,7 +289,6 @@ def train():
         if args.clip != 0: torch.nn.utils.clip_grad_norm_(params, args.clip)
         
         total_loss += raw_loss.data
-        print(batch)
         
         if (batch + 1) % accumulation_steps == 0:
             optimizer.step()

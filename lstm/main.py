@@ -25,7 +25,7 @@ parser.add_argument('--nlayers', type=int, default=2,
                     help='number of layers')
 parser.add_argument('--lr', type=float, default=30,
                     help='initial learning rate')
-parser.add_argument('--clip', type=float, default=0.25,
+parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
 parser.add_argument('--epochs', type=int, default=150,
                     help='upper epoch limit')
@@ -278,7 +278,7 @@ def train():
         loss.backward()
 
         # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.
-        if args.clip: torch.nn.utils.clip_grad_norm_(params, args.clip)
+        if args.clip != 0: torch.nn.utils.clip_grad_norm_(params, args.clip)
         optimizer.step()
 
         total_loss += raw_loss.data
@@ -290,6 +290,8 @@ def train():
         if batch % args.log_interval == 0 and batch > 0:
             cur_loss = total_loss.item() / args.log_interval
             elapsed = time.time() - start_time
+            print('len_train', len(train_data))
+            print('len_seq_len', args.bptt)
             print('| epoch {:3d} | {:5d}/{:5d} batches | lr {:05.5f} | ms/batch {:5.2f} | '
                     'loss {:5.2f} | ppl {:8.2f} | bpc {:8.3f}'.format(
                 epoch, batch, len(train_data) // args.bptt, optimizer.param_groups[0]['lr'],

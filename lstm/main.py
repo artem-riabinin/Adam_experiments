@@ -192,8 +192,6 @@ def eval_grad(model):
         # There's a very small chance that it could select a very long sequence length resulting in OOM
         # seq_len = min(seq_len, args.bptt + 10)
 
-        lr2 = optimizer.param_groups[0]['lr']
-        optimizer.param_groups[0]['lr'] = lr2 * seq_len / args.bptt
         model.train()
         data, targets = get_batch(train_data, i, args, seq_len=seq_len)
 
@@ -223,7 +221,6 @@ def eval_grad(model):
 #         optimizer.step()
 
 #         total_loss += raw_loss.data
-        optimizer.param_groups[0]['lr'] = lr2
         if batch % args.log_interval == 0 and batch > 0:
             total_loss = 0
             start_time = time.time()
@@ -249,7 +246,6 @@ def train():
     hidden = model.init_hidden(args.batch_size)
     batch, i = 0, 0
     accumulation_steps = train_data.size(0) // args.bptt
-    print(accumulation_steps)
     while i < train_data.size(0):
         prev_model = copy.deepcopy(model)
         #bptt = args.bptt if np.random.random() < 0.95 else args.bptt / 2.
@@ -260,8 +256,6 @@ def train():
         # There's a very small chance that it could select a very long sequence length resulting in OOM
         # seq_len = min(seq_len, args.bptt + 10)
 
-        lr2 = optimizer.param_groups[0]['lr']
-        optimizer.param_groups[0]['lr'] = lr2 * seq_len / args.bptt
         model.train()
         data, targets = get_batch(train_data, i, args, seq_len=seq_len)
 
@@ -291,8 +285,6 @@ def train():
             optimizer.zero_grad()
             cur_loss = total_loss.item()
             print(f"| epoch {epoch:3d} | total loss {cur_loss:.2f} |")
-
-        optimizer.param_groups[0]['lr'] = lr2
         
         ###
         batch += 1

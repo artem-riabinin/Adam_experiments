@@ -6,6 +6,11 @@ import torch
 import torch.nn as nn
 import copy
 
+# wandb logging
+wandb_log = True 
+wandb_project = 'lstm'
+wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.999_lr_1'
+
 import data
 import model
 
@@ -23,10 +28,14 @@ parser.add_argument('--nhid', type=int, default=512,
                     help='number of hidden units per layer')
 parser.add_argument('--nlayers', type=int, default=2,
                     help='number of layers')
-parser.add_argument('--lr', type=float, default=30,
+parser.add_argument('--lr', type=float, default=1,
                     help='initial learning rate')
 parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
+parser.add_argument('--beta1', type=float, default=0.9,
+                    help='beta1')
+parser.add_argument('--beta2', type=float, default=0.999,
+                    help='beta2')
 parser.add_argument('--epochs', type=int, default=150,
                     help='upper epoch limit')
 parser.add_argument('--batch_size', type=int, default=2640, metavar='N',
@@ -279,12 +288,18 @@ def train():
         if args.clip != 0: torch.nn.utils.clip_grad_norm_(params, args.clip)
         
         total_loss += raw_loss.data
+        print(batch)
         
         if (batch + 1) % accumulation_steps == 0:
             optimizer.step()
             optimizer.zero_grad()
             cur_loss = total_loss.item()
             print(f"| epoch {epoch:3d} | total loss {cur_loss:.2f} |")
+            if wandb_log:
+                wandb.log({
+                    "epoch": epoch,
+                    "train/loss": cur_loss,
+                })
         
         ###
         batch += 1
@@ -334,7 +349,8 @@ try:
     if args.optimizer == 'sgd':
         optimizer = torch.optim.SGD(params, lr=args.lr, weight_decay=0)#args.wdecay)
     if args.optimizer == 'adam':
-        optimizer = torch.optim.Adam(params, lr=args.lr, weight_decay=args.wdecay)
+        betas = (args.beta1, args.beta2)
+        optimizer = torch.optim.Adam(params, lr=args.lr, betas=betas, weight_decay=args.wdecay)
         
         
     

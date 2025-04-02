@@ -289,7 +289,8 @@ def train():
         if (batch + 1) % accumulation_steps == 0:
             optimizer.step()
             optimizer.zero_grad()
-            print(f"| epoch {epoch:3d} | total loss {total_loss:.2f} |")
+            cur_loss = total_loss.item()
+            print(f"| epoch {epoch:3d} | total loss {cur_loss:.2f} |")
 
         optimizer.param_groups[0]['lr'] = lr2
         

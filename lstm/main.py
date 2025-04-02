@@ -248,6 +248,8 @@ def train():
     ntokens = len(corpus.dictionary)
     hidden = model.init_hidden(args.batch_size)
     batch, i = 0, 0
+    accumulation_steps = train_data.size(0) // args.bptt
+    print(accumulation_steps)
     while i < train_data.size(0):
         prev_model = copy.deepcopy(model)
         #bptt = args.bptt if np.random.random() < 0.95 else args.bptt / 2.
@@ -266,23 +268,30 @@ def train():
         # Starting each batch, we detach the hidden state from how it was previously produced.
         # If we didn't, the model would try backpropagating all the way to start of the dataset.
         hidden = repackage_hidden(hidden)
-        optimizer.zero_grad()
 
         output, hidden, rnn_hs, dropped_rnn_hs = model(data, hidden, return_h=True)
         raw_loss = criterion(model.decoder.weight, model.decoder.bias, output, targets)
+        raw_loss = raw_loss / accumulation_steps
 
         loss = raw_loss
         # Activiation Regularization
         if args.alpha: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:])
         # Temporal Activation Regularization (slowness)
-        if args.beta: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:])
+        if args.beta: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:]) / accumulation_steps
+        
         loss.backward()
 
         # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.
         if args.clip != 0: torch.nn.utils.clip_grad_norm_(params, args.clip)
-        optimizer.step()
-
+        
         total_loss += raw_loss.data
+        
+        if (batch + 1) % accumulation_steps == 0:
+            optimizer.step()
+            optimizer.zero_grad()
+            print(f"| epoch {epoch:3d} | total loss {total_loss:.2f} |")
+            total_loss = 0
+
         optimizer.param_groups[0]['lr'] = lr2
         
         if batch % args.smooth_log_interval == 0 and batch > 0:
@@ -291,13 +300,10 @@ def train():
         if batch % args.log_interval == 0 and batch > 0:
             cur_loss = total_loss.item() / args.log_interval
             elapsed = time.time() - start_time
-            print('len_train', len(train_data))
-            print('len_seq_len', args.bptt)
             print('| epoch {:3d} | {:5d}/{:5d} batches | lr {:05.5f} | ms/batch {:5.2f} | '
                     'loss {:5.2f} | ppl {:8.2f} | bpc {:8.3f}'.format(
                 epoch, batch, len(train_data) // args.bptt, optimizer.param_groups[0]['lr'],
                 elapsed * 1000 / args.log_interval, cur_loss, math.exp(cur_loss), cur_loss / math.log(2)))
-            total_loss = 0
             start_time = time.time()
         ###
         batch += 1

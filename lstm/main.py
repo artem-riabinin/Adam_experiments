@@ -29,7 +29,7 @@ parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
 parser.add_argument('--epochs', type=int, default=150,
                     help='upper epoch limit')
-parser.add_argument('--batch_size', type=int, default=256, metavar='N',
+parser.add_argument('--batch_size', type=int, default=2640, metavar='N',
                     help='batch size')
 parser.add_argument('--bptt', type=int, default=70,
                     help='sequence length')
@@ -106,6 +106,7 @@ else:
 
 eval_batch_size = 10
 test_batch_size = 1
+corpus.train = corpus.train[:-5589]
 train_data = batchify(corpus.train, args.batch_size, args)
 eval_data = train_data
 val_data = batchify(corpus.valid, eval_batch_size, args)

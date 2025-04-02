@@ -11,6 +11,8 @@ import wandb
 wandb_log = True 
 wandb_project = 'lstm'
 wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.999_lr_1'
+if wandb_log:
+    run = wandb.init(project=wandb_project, name=wandb_run_name)
 
 import data
 import model
@@ -436,3 +438,5 @@ print('=' * 89)
 print('| End of training | test loss {:5.2f} | test ppl {:8.2f} | test bpc {:8.3f}'.format(
     test_loss, math.exp(test_loss), test_loss / math.log(2)))
 print('=' * 89)
+
+run.finish()

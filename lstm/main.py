@@ -10,7 +10,7 @@ import wandb
 # wandb logging
 wandb_log = True 
 wandb_project = 'lstm'
-wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.999_lr_1'
+wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.999_lr_0.1'
 if wandb_log:
     run = wandb.init(project=wandb_project, name=wandb_run_name)
 
@@ -31,7 +31,7 @@ parser.add_argument('--nhid', type=int, default=512,
                     help='number of hidden units per layer')
 parser.add_argument('--nlayers', type=int, default=2,
                     help='number of layers')
-parser.add_argument('--lr', type=float, default=1,
+parser.add_argument('--lr', type=float, default=0.1,
                     help='initial learning rate')
 parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
@@ -39,7 +39,7 @@ parser.add_argument('--beta1', type=float, default=0.9,
                     help='beta1')
 parser.add_argument('--beta2', type=float, default=0.999,
                     help='beta2')
-parser.add_argument('--epochs', type=int, default=200,
+parser.add_argument('--epochs', type=int, default=300,
                     help='upper epoch limit')
 parser.add_argument('--batch_size', type=int, default=2640, metavar='N',
                     help='batch size')
@@ -68,11 +68,11 @@ parser.add_argument('--smooth-log-interval', type=int, default=1, metavar='N',
 randomhash = ''.join(str(time.time()).split('.'))
 parser.add_argument('--save', type=str,  default=randomhash+'.pt',
                     help='path to save the final model')
-parser.add_argument('--alpha', type=float, default=2,
+parser.add_argument('--alpha', type=float, default=0,
                     help='alpha L2 regularization on RNN activation (alpha = 0 means no regularization)')
-parser.add_argument('--beta', type=float, default=1,
+parser.add_argument('--beta', type=float, default=0,
                     help='beta slowness regularization applied on RNN activiation (beta = 0 means no regularization)')
-parser.add_argument('--wdecay', type=float, default=1.e-6,
+parser.add_argument('--wdecay', type=float, default=0,
                     help='weight decay applied to all weights')
 parser.add_argument('--resume', type=str,  default='',
                     help='path of model to resume')
@@ -281,7 +281,7 @@ def train():
 
         loss = raw_loss
         # Activiation Regularization
-        if args.alpha: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:])
+        if args.alpha: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:]) / accumulation_steps
         # Temporal Activation Regularization (slowness)
         if args.beta: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:]) / accumulation_steps
         

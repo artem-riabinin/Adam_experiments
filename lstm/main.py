@@ -10,7 +10,7 @@ import wandb
 # wandb logging
 wandb_log = True 
 wandb_project = 'lstm'
-wandb_run_name = 'fullbatch_beta1_0.1_beta2_0.999_lr_0.01'
+wandb_run_name = 'fullbatch_beta1_0.1_beta2_0.1_lr_0.01'
 if wandb_log:
     run = wandb.init(project=wandb_project, name=wandb_run_name)
 
@@ -37,7 +37,7 @@ parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
 parser.add_argument('--beta1', type=float, default=0.1,
                     help='beta1')
-parser.add_argument('--beta2', type=float, default=0.999,
+parser.add_argument('--beta2', type=float, default=0.1,
                     help='beta2')
 parser.add_argument('--epochs', type=int, default=300,
                     help='upper epoch limit')

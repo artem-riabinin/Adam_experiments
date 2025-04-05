@@ -10,7 +10,7 @@ import wandb
 # wandb logging
 wandb_log = True 
 wandb_project = 'lstm'
-wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.999_lr_0.1'
+wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.5_lr_0.1'
 if wandb_log:
     run = wandb.init(project=wandb_project, name=wandb_run_name)
 
@@ -37,7 +37,7 @@ parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
 parser.add_argument('--beta1', type=float, default=0.9,
                     help='beta1')
-parser.add_argument('--beta2', type=float, default=0.999,
+parser.add_argument('--beta2', type=float, default=0.5,
                     help='beta2')
 parser.add_argument('--epochs', type=int, default=300,
                     help='upper epoch limit')
@@ -223,9 +223,9 @@ def eval_grad(model):
         
         loss = raw_loss + args.wdecay * total_norm
         # Activiation Regularization
-        if args.alpha: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:])
+        if args.alpha!=0: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:])
         # Temporal Activation Regularization (slowness)
-        if args.beta: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:])
+        if args.beta!=0: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:])
         loss.backward()
 
         # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.

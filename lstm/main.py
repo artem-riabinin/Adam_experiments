@@ -10,7 +10,7 @@ import wandb
 # wandb logging
 wandb_log = True 
 wandb_project = 'lstm'
-wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.1_lr_0.01'
+wandb_run_name = 'fullbatch_beta1_0.1_beta2_0.1_lr_0.01'
 if wandb_log:
     run = wandb.init(project=wandb_project, name=wandb_run_name)
 
@@ -35,7 +35,7 @@ parser.add_argument('--lr', type=float, default=0.01,
                     help='initial learning rate')
 parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
-parser.add_argument('--beta1', type=float, default=0.9,
+parser.add_argument('--beta1', type=float, default=0.1,
                     help='beta1')
 parser.add_argument('--beta2', type=float, default=0.1,
                     help='beta2')
@@ -68,9 +68,9 @@ parser.add_argument('--smooth-log-interval', type=int, default=1, metavar='N',
 randomhash = ''.join(str(time.time()).split('.'))
 parser.add_argument('--save', type=str,  default=randomhash+'.pt',
                     help='path to save the final model')
-parser.add_argument('--alpha', type=float, default=0,
+parser.add_argument('--alpha', type=float, default=2,
                     help='alpha L2 regularization on RNN activation (alpha = 0 means no regularization)')
-parser.add_argument('--beta', type=float, default=0,
+parser.add_argument('--beta', type=float, default=1,
                     help='beta slowness regularization applied on RNN activiation (beta = 0 means no regularization)')
 parser.add_argument('--wdecay', type=float, default=0,
                     help='weight decay applied to all weights')

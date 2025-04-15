@@ -9,8 +9,8 @@ import wandb
 
 # wandb logging
 wandb_log = True 
-wandb_project = 'lstm'
-wandb_run_name = 'fullbatch_beta1_0.9_beta2_0.1_lr_0.01'
+wandb_project = 'lstm_exp'
+wandb_run_name = 'fullbatch_beta1_0_beta2_0.999_lr_0.001'
 if wandb_log:
     run = wandb.init(project=wandb_project, name=wandb_run_name)
 
@@ -35,11 +35,11 @@ parser.add_argument('--lr', type=float, default=0.01,
                     help='initial learning rate')
 parser.add_argument('--clip', type=float, default=0,
                     help='gradient clipping')
-parser.add_argument('--beta1', type=float, default=0.9,
+parser.add_argument('--beta1', type=float, default=0,
                     help='beta1')
-parser.add_argument('--beta2', type=float, default=0.1,
+parser.add_argument('--beta2', type=float, default=0.999,
                     help='beta2')
-parser.add_argument('--epochs', type=int, default=300,
+parser.add_argument('--epochs', type=int, default=500,
                     help='upper epoch limit')
 parser.add_argument('--batch_size', type=int, default=2640, metavar='N',
                     help='batch size')
@@ -281,9 +281,9 @@ def train():
 
         loss = raw_loss
         # Activiation Regularization
-        if args.alpha: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:]) / accumulation_steps
+        if args.alpha: loss = loss + sum(args.alpha * dropped_rnn_h.pow(2).mean() for dropped_rnn_h in dropped_rnn_hs[-1:])
         # Temporal Activation Regularization (slowness)
-        if args.beta: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:]) / accumulation_steps
+        if args.beta: loss = loss + sum(args.beta * (rnn_h[1:] - rnn_h[:-1]).pow(2).mean() for rnn_h in rnn_hs[-1:]) 
         
         loss.backward()
 

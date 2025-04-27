@@ -142,7 +142,13 @@ model = ResNet(ResidualBlock, [3, 3, 3]).to(device)
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=betas)
+optimizer = torch.optim.AdamW(
+    model.parameters(),
+    lr=learning_rate,
+    betas=betas,
+    weight_decay=0.0, 
+    bias_correction=False
+)
 
 
 

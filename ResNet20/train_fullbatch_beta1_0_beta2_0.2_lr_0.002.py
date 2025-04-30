@@ -9,7 +9,7 @@ import torchvision.transforms as transforms
 # wandb logging
 wandb_log = True 
 wandb_project = 'resnet20_exp'
-wandb_run_name = 'fullbatch_no_bias_corr_beta1_0_beta2_0.01_lr_0.002'
+wandb_run_name = 'fullbatch_no_bias_corr_beta1_0_beta2_0.2_lr_0.002'
 
 
 
@@ -22,7 +22,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = 1000
 learning_rate = 0.002
 beta1 = 0
-beta2 = 0.01
+beta2 = 0.2
 betas = (beta1, beta2)
 mini_batch_size = 10000
 accumulation_steps = 5
